@@ -1,18 +1,13 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import { Toaster } from 'react-hot-toast'
-import { Navbar } from '../components/Navbar'
 import NewProfileModal from '../components/NewProfileModal'
-import { useSnapshot } from 'valtio'
-import { state } from '../src/state'
-import { useEffect } from 'react'
+import { useAppStore } from '../src/store/app'
+import React, { useEffect } from 'react'
 
 const Home: NextPage = () => {
-  const snap = useSnapshot(state, { sync: true })
+  const profiles = useAppStore((state) => state.profiles)
 
-  useEffect(() => {}, [snap.profiles])
+  useEffect(() => {}, [profiles])
 
   return (
     <div>
@@ -21,8 +16,6 @@ const Home: NextPage = () => {
         <meta name="description" content="created by Abu Usama" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      {/* body */}
 
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
@@ -36,7 +29,7 @@ const Home: NextPage = () => {
                 defaultValue="Your Handles"
               >
                 {/* <option disabled selected>Your Handles</option> */}
-                {snap.profiles.map((p, i) => (
+                {profiles.map((p, i) => (
                   <option key={i}>{p?.handle}</option>
                 ))}
               </select>

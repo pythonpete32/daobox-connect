@@ -9,41 +9,42 @@ import {
   useAccount,
 } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import companyTemplateAbi from '../abis/companyTemplate.json'
+import DaoBoxTemplateABI from '../abis/DaoBoxTemplateABI.json'
+
+// [DAO Box Voting Base](https://dashboard.tenderly.co/contract/mumbai/0x1fbc0e91aab655206ae7ecef345528edb571a91c)
+// [DAO Box Factory](https://dashboard.tenderly.co/contract/mumbai/0x9AC4B1A42b32185bfC0dA828AA12f37769309bA0)
+// [NFT Factory](https://dashboard.tenderly.co/contract/mumbai/0x6F1F888938a03432ca4AAB4503A971c301F605b3)
 
 export function CreateDaoCard() {
   const { address } = useAccount()
   const [daoName, setDaoName] = React.useState('')
-  const [tokenName, setTokenName] = React.useState('')
+  const [tokenAddress, setTokenAddress] = React.useState('')
   const [tokenSymbol, setTokenSymbol] = React.useState('')
   const debouncedDaoName = useDebounce(daoName, 500)
-  const debouncedTokenName = useDebounce(tokenName, 500)
+  const debouncedTokenAddress = useDebounce(tokenAddress, 500)
   const debouncedTokenSymbol = useDebounce(tokenSymbol, 500)
   const addRecentTransaction = useAddRecentTransaction()
 
   // DAO Settings
-  const FACTORY_ADDRESS = '0xBc0BacC84F956Cd66399eeC8d974737FBB03755D'
+  const FACTORY_ADDRESS = '0x9AC4B1A42b32185bfC0dA828AA12f37769309bA0'
+  // const VOTING_TOKEN = '0x6f4bd5602d1e45e80190bdc43ba9e2bdff18759e'
   const ONE_TOKEN = ethers.utils.parseEther('1')
   const FIFTY_PERCENT = ethers.utils.parseEther('0.5')
   const FIVE_PERCENT = ethers.utils.parseEther('0.05')
   const THREE_MINUTES = 180
-  const FINANCE_PERIOD = 0
-  const AGENT = true
   const args = [
-    debouncedTokenName[0],
-    debouncedTokenSymbol[0],
+    tokenAddress,
+    address,
     debouncedDaoName[0],
     [address],
     [ONE_TOKEN],
     [FIFTY_PERCENT, FIVE_PERCENT, THREE_MINUTES],
-    FINANCE_PERIOD,
-    AGENT,
   ]
 
   const { config } = usePrepareContractWrite({
     addressOrName: FACTORY_ADDRESS,
-    contractInterface: companyTemplateAbi,
-    functionName: 'newTokenAndInstance',
+    contractInterface: DaoBoxTemplateABI,
+    functionName: 'newInstance',
     args,
     enabled: isReadyToTransact(),
   })
@@ -96,26 +97,14 @@ export function CreateDaoCard() {
           </div>
           <div className="form-control w-full">
             <label className="label">
-              <span className="label-text">Token Name</span>
+              <span className="label-text">Follow NFT Address</span>
             </label>
             <input
               type="text"
               placeholder="Type here"
               className="input input-bordered w-full"
-              value={tokenName}
-              onChange={(e) => setTokenName(e.target.value)}
-            />
-          </div>
-          <div className="form-control w-full ">
-            <label className="label">
-              <span className="label-text">Token Symbol</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered w-full "
-              value={tokenSymbol}
-              onChange={(e) => setTokenSymbol(e.target.value)}
+              value={tokenAddress}
+              onChange={(e) => setTokenAddress(e.target.value)}
             />
           </div>
           <div className="flex align-middle justify-center w-full">
@@ -134,7 +123,7 @@ export function CreateDaoCard() {
   function logTxSettings() {
     console.group('Create DAO')
     console.log('DAO Name:', debouncedDaoName[0])
-    console.log('Token Name:', debouncedTokenName[0])
+    console.log('Token Address:', debouncedTokenAddress[0])
     console.log('Token Symbol:', debouncedTokenSymbol[0])
     console.log('Address:', address)
     console.log('error', error)
@@ -142,10 +131,7 @@ export function CreateDaoCard() {
   }
 
   function isReadyToTransact(): boolean | undefined {
-    return debouncedDaoName[0] &&
-      debouncedTokenName[0] &&
-      debouncedTokenSymbol[0] &&
-      address
+    return debouncedDaoName[0] && debouncedTokenAddress[0] && address
       ? true
       : false
   }
