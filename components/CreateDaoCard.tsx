@@ -7,15 +7,21 @@ import {
   useContractWrite,
   useWaitForTransaction,
   useAccount,
+  useContractEvent,
 } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import DaoBoxTemplateABI from '../abis/DaoBoxTemplateABI.json'
+import { useAppPersistStore, useAppStore } from '../src/store/app'
 
 // [DAO Box Voting Base](https://dashboard.tenderly.co/contract/mumbai/0x1fbc0e91aab655206ae7ecef345528edb571a91c)
 // [DAO Box Factory](https://dashboard.tenderly.co/contract/mumbai/0x9AC4B1A42b32185bfC0dA828AA12f37769309bA0)
 // [NFT Factory](https://dashboard.tenderly.co/contract/mumbai/0x6F1F888938a03432ca4AAB4503A971c301F605b3)
 
 export function CreateDaoCard() {
+  const dao = useAppStore((state) => state.dao)
+  const token = useAppStore((state) => state.token)
+  const setDao = useAppStore((state) => state.setDao)
+  const setToken = useAppStore((state) => state.setToken)
   const { address } = useAccount()
   const [daoName, setDaoName] = React.useState('')
   const [tokenAddress, setTokenAddress] = React.useState('')
@@ -63,6 +69,17 @@ export function CreateDaoCard() {
     onError(error) {
       console.log('error', error)
       toast.error('Failed to create DAO')
+    },
+  })
+
+  useContractEvent({
+    addressOrName: FACTORY_ADDRESS,
+    contractInterface: DaoBoxTemplateABI,
+    eventName: 'NewDao',
+    listener: (event) => {
+      console.log('NewDao', event)
+      setDao(event[0])
+      setToken(tokenAddress)
     },
   })
 

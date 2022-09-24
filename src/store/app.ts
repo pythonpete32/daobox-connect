@@ -14,6 +14,8 @@ interface AppState {
   setUserSigNonce: (userSigNonce: number) => void
   dao: string | null
   setDao: (dao: string | null) => void
+  token: string | null
+  setToken: (token: string | null) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -27,6 +29,8 @@ export const useAppStore = create<AppState>((set) => ({
   setUserSigNonce: (userSigNonce) => set(() => ({ userSigNonce })),
   dao: null,
   setDao: (dao) => set(() => ({ dao })),
+  token: null,
+  setToken: (token) => set(() => ({ token })),
 }))
 
 interface AppPersistState {
@@ -38,6 +42,8 @@ interface AppPersistState {
   setNotificationCount: (notificationCount: number) => void
   dao: string | null
   setDao: (dao: string | null) => void
+  token: string | null
+  setToken: (token: string | null) => void
 }
 
 export const useAppPersistStore = create(
@@ -49,6 +55,8 @@ export const useAppPersistStore = create(
       setAuthenticated: (authenticated) => set(() => ({ authenticated })),
       dao: null,
       setDao: (dao) => set(() => ({ dao })),
+      token: null,
+      setToken: (token) => set(() => ({ token })),
       notificationCount: 0,
       setNotificationCount: (notificationCount) =>
         set(() => ({ notificationCount })),
