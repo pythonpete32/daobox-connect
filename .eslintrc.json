@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "plugin:valtio/recommended",
+    "next/core-web-vitals"
+  ]
+}
