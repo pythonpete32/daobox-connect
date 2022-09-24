@@ -23,12 +23,15 @@ specifiers:
   next: ^12.1.6
   next-auth: ^4.10.3
   postcss: ^8.4.16
+  prettier: ^2.7.1
   react: ^18.1.0
   react-dom: ^18.1.0
   react-hot-toast: ^2.4.0
   siwe: ^1.1.6
   tailwindcss: ^3.1.8
   typescript: ^4.7.2
+  use-debounce: ^8.0.4
+  usehooks-ts: ^2.7.1
   valtio: ^1.7.0
   wagmi: ^0.6.0
 
@@ -51,6 +54,8 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-hot-toast: 2.4.0_biqbaboplfbrettd7655fr4n2y
   siwe: 1.1.6_ethers@5.7.1
+  use-debounce: 8.0.4_react@18.2.0
+  usehooks-ts: 2.7.1_biqbaboplfbrettd7655fr4n2y
   valtio: 1.7.0_react@18.2.0
   wagmi: 0.6.6_nznuxirfauibn2fjde2ghjonky
 
@@ -63,7 +68,8 @@ devDependencies:
   eslint-config-next: 12.3.0_irgkl5vooow2ydyo6aokmferha
   eslint-plugin-valtio: 0.6.0
   postcss: 8.4.16
-  tailwindcss: 3.1.8_postcss@8.4.16
+  prettier: 2.7.1
+  tailwindcss: 3.1.8
   typescript: 4.8.3
 
 packages:
@@ -924,7 +930,7 @@ packages:
       tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.1.8_postcss@8.4.16
+      tailwindcss: 3.1.8
     dev: false
 
   /@tanstack/query-core/4.3.4:
@@ -2029,7 +2035,7 @@ packages:
       css-selector-tokenizer: 0.8.0
       postcss: 8.4.16
       postcss-js: 4.0.0_postcss@8.4.16
-      tailwindcss: 3.1.8_postcss@8.4.16
+      tailwindcss: 3.1.8
     transitivePeerDependencies:
       - ts-node
     dev: false
@@ -3923,6 +3929,12 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
   /pretty-format/3.8.0:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
     dev: false
@@ -4458,12 +4470,10 @@ packages:
     engines: {node: '>=0.10'}
     dev: false
 
-  /tailwindcss/3.1.8_postcss@8.4.16:
+  /tailwindcss/3.1.8:
     resolution: {integrity: sha512-YSneUCZSFDYMwk+TGq8qYFdCA3yfBRdBlS7txSq0LUmzyeqRe3a8fBQzbz9M3WS/iFT4BNf/nmw9mEzrnSaC0g==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -4621,6 +4631,15 @@ packages:
       tslib: 2.4.0
     dev: false
 
+  /use-debounce/8.0.4_react@18.2.0:
+    resolution: {integrity: sha512-fGqsYQzl8kLHF2QpQSgIwgOgJmnh6j5L6SIzQiHdLfwp3q1egUL3btq5Bg2SJysH6A0ILLgT2IqXZKoNJr0nFw==}
+    engines: {node: '>= 10.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /use-sidecar/1.1.2_w5j4k42lgipnm43s3brx6h3c34:
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==}
     engines: {node: '>=10'}
@@ -4643,6 +4662,17 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /usehooks-ts/2.7.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-7WgP5ELpmJ/5rZ4P+YnfhLXdiGf1Xpy4iLnjcifBGmwBWXBBa9FZRRHNOiJJw1NKIAU9LOaKaps4G3KXLPhZ6w==}
+    engines: {node: '>=16.15.0', npm: '>=8'}
+    peerDependencies:
+      react: ^16.8.0  || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /utf-8-validate/5.0.9:
