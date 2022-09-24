@@ -1,13 +1,12 @@
-import React, { Fragment, FC, useEffect, useState } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { CLAIM_HANDLE } from "../src/gql/Handle";
-import { GET_PROFILES } from "../src/gql/User";
+import React, { Fragment, FC, useEffect, useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import { CLAIM_HANDLE } from '../src/gql/Handle'
+import { GET_PROFILES } from '../src/gql/User'
 import { Dialog, Transition } from '@headlessui/react'
-import toast from "react-hot-toast";
+import toast from 'react-hot-toast'
+import { useAppPersistStore, useAppStore } from '../src/store/app'
 
-import { useSnapshot } from 'valtio'
-import { state } from "../src/state";
-import { useAccount } from "wagmi";
+import { useAccount } from 'wagmi'
 
 const TOAST = {
   style: {
@@ -18,41 +17,49 @@ const TOAST = {
 }
 
 const WARNING = {
-  ...TOAST, icon: 'ℹ️',
+  ...TOAST,
+  icon: 'ℹ️',
 }
 
 const SUCCESS = {
-  ...TOAST, icon: '✅',
+  ...TOAST,
+  icon: '✅',
 }
 
 const ERROR = {
-  ...TOAST, icon: '❌',
+  ...TOAST,
+  icon: '❌',
 }
 
-
 export default function MyModal() {
-  let { isAuthenticated } = useSnapshot(state);
+  // zustand
+  const authenticated = useAppStore((state) => state.authenticated)
+  const setProfiles = useAppStore((state) => state.setProfiles)
+  const setCurrentProfile = useAppStore((state) => state.setCurrentProfile)
+  const setProfileId = useAppPersistStore((state) => state.setProfileId)
 
-  const { address } = useAccount();
+  const { address } = useAccount()
   let [isOpen, setIsOpen] = useState(false)
   const [handle, setHandle] = useState('')
   const [claimed, setClaimed] = useState(false)
 
-  const [claimHandle, { error: errorClaimHandle, loading: claimHandleLoading }] =
-    useMutation(CLAIM_HANDLE, {
-      onCompleted: (data) => {
-        console.log("Handle Claimed: ", data)
-        toast(`Claimed: ${handle} `, SUCCESS);
-        setClaimed(true)
-      },
-    })
+  const [
+    claimHandle,
+    { error: errorClaimHandle, loading: claimHandleLoading },
+  ] = useMutation(CLAIM_HANDLE, {
+    onCompleted: (data) => {
+      console.log('Handle Claimed: ', data)
+      toast(`Claimed: ${handle} `, SUCCESS)
+      setClaimed(true)
+    },
+  })
 
   const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
     useLazyQuery(GET_PROFILES, {
       onCompleted() {
-        console.log("Get Profiles", `Got Profiles`);
+        console.log('Get Profiles', `Got Profiles`)
       },
-    });
+    })
 
   function closeModal() {
     setIsOpen(false)
@@ -64,7 +71,7 @@ export default function MyModal() {
 
   const handleRegisterNewUser = async () => {
     try {
-      toast("Claiming...", WARNING)
+      toast('Claiming...', WARNING)
       closeModal()
       const { data } = await claimHandle({
         variables: {
@@ -72,39 +79,41 @@ export default function MyModal() {
         },
       })
       console.log(data)
-
     } catch (error) {
       console.log(error)
-      toast(error?.message, ERROR);
+      toast(error?.message, ERROR)
     }
   }
 
   useEffect(() => {
-    console.log("in useEffect after claimed", handle)
-    if (isAuthenticated) {
-      (async function () {
+    console.log('in useEffect after claimed', handle)
+    if (authenticated) {
+      ;(async function () {
         try {
           const { data: profilesData } = await getProfiles({
             variables: { request: { ownedBy: address } },
-          });
+          })
           if (profilesData?.profiles?.items?.length === 0) {
-            console.log("No profiles");
-            state.profiles = []
+            console.log('No profiles')
+            // state.profiles = []
+            setProfiles([])
           } else {
             const profiles = profilesData?.profiles?.items
               ?.slice()
               ?.sort((a, b) => Number(a.id) - Number(b.id))
               ?.sort((a, b) =>
                 !(a.isDefault !== b.isDefault) ? 0 : a.isDefault ? -1 : 1
-              );
-            console.log("Profiles DATA (sorted)", profiles);
-            state.profiles = profiles;
-            state.currentUser = profiles[0];
+              )
+            console.log('Profiles DATA (sorted)', profiles)
+            setProfiles(profiles)
+            setCurrentProfile(profiles[0])
+            console.log('Current Profile', profiles[0])
+            setProfileId(profiles[0].id)
           }
         } catch (e) {
-          console.log("Fetch profile Error", e);
+          console.log('Fetch profile Error', e)
         }
-      })();
+      })()
     }
   }, [claimed])
 
@@ -117,7 +126,6 @@ export default function MyModal() {
       >
         Claim Lens handle
       </button>
-
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -148,7 +156,6 @@ export default function MyModal() {
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
-
                   >
                     Register your Lens handle
                   </Dialog.Title>
@@ -169,12 +176,14 @@ export default function MyModal() {
                               <span className="inline-flex items-center  rounded-r-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                 .lens
                               </span>
-
                             </div>
                           </div>
 
                           <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            <label
+                              htmlFor="password"
+                              className="block text-sm font-medium text-gray-700"
+                            >
                               Profile Picture
                             </label>
                             <div className="mt-1">
@@ -202,18 +211,24 @@ export default function MyModal() {
                                           className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
                                         >
                                           <span>Upload a file</span>
-                                          <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                          <input
+                                            id="file-upload"
+                                            name="file-upload"
+                                            type="file"
+                                            className="sr-only"
+                                          />
                                         </label>
                                         <p className="pl-1">or drag and drop</p>
                                       </div>
-                                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                      <p className="text-xs text-gray-500">
+                                        PNG, JPG, GIF up to 10MB
+                                      </p>
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-
                         </form>
                       </div>
                     </div>
@@ -235,7 +250,6 @@ export default function MyModal() {
                       Register
                     </button>
                   </div>
-
                 </Dialog.Panel>
               </Transition.Child>
             </div>
